@@ -2,7 +2,6 @@
 
 A high-performance, AI-powered video discovery and aggregation platform tailored for the Tamil Gaming community. Featuring real-time YouTube synchronization, CLIP-based computer vision classification, and an automated, balanced discovery engine.
 
-![TamilGaming Showcase](https://via.placeholder.com/1200x600.png?text=TamilGaming.tv+Dynamic+Showcase)
 
 ## ✨ Vibe Coding & AI Collaboration
 
