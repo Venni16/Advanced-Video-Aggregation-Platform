@@ -5,8 +5,7 @@ A high-performance, AI-powered video discovery and aggregation platform tailored
 
 ## ✨ AI-Assisted Development
 
-This project was developed using modern AI-assisted development workflows to accelerate prototyping and implementation. 
-AI tools were used to support code generation and experimentation, while the system architecture, service integration, and core engineering decisions were designed and implemented by me.
+This project was developed using modern AI-assisted development workflows to accelerate prototyping and experimentation. AI tools were used to assist with parts of the implementation, while the system architecture, service integration, and core engineering decisions were designed and implemented by the developer.
 
 The platform follows a microservice-based architecture integrating a Node.js API layer with a Python FastAPI AI inference service powered by Hugging Face Transformers.
 
