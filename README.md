@@ -3,9 +3,12 @@
 A high-performance, AI-powered video discovery and aggregation platform tailored for the Tamil Gaming community. Featuring real-time YouTube synchronization, CLIP-based computer vision classification, and an automated, balanced discovery engine.
 
 
-## ✨ Vibe Coding & AI Collaboration
+## ✨ AI-Assisted Development
 
-This project was built using **Vibe Coding** principles—leveraging advanced AI to rapidly transform high-level requirements into a production-ready, microservice-based architecture. It represents a modern collaboration where human vision and "vibes" drive the creative direction, while AI handles the complex implementation details of the full-stack system.
+This project was developed using modern AI-assisted development workflows to accelerate prototyping and implementation. 
+AI tools were used to support code generation and experimentation, while the system architecture, service integration, and core engineering decisions were designed and implemented by me.
+
+The platform follows a microservice-based architecture integrating a Node.js API layer with a Python FastAPI AI inference service powered by Hugging Face Transformers.
 
 ## 🚀 Core Features
 
