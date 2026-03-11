@@ -96,5 +96,8 @@ By leveraging YouTube's **Uploads Playlist API**, the platform fetches content c
 ## 🤝 Contributing
 Feel free to fork this project and submit PRs for any improvements, especially around new CLIP prompt optimizations or frontend UI enhancements.
 
+## Author
+Vennilavan Manoharan
+
 ## 📄 License
-MIT License — see the [LICENSE](LICENSE) file for details.
+MIT License —
