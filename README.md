@@ -100,4 +100,6 @@ Feel free to fork this project and submit PRs for any improvements, especially a
 Vennilavan Manoharan
 
 ## 📄 License
-MIT License —
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
