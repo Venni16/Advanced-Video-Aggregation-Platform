@@ -54,33 +54,81 @@ docker-compose up --build -d
 
 Access the platform at `http://localhost:5173`.
 
-## 🏗 Architecture Overview
+## 🏗 System Architecture
+
+The platform is built on a scalable microservices architecture, utilizing a centralized gateway to orchestrate data flow between the frontend, core API, and AI inference engine.
 
 ```mermaid
 graph TD
-    subgraph "Client Side"
-        FE[React Frontend]
+    User([User / Browser]) --> Nginx[Nginx Reverse Proxy]
+    
+    subgraph "Public Network"
+        Nginx
     end
 
-    subgraph "Backend Services"
-        BE[Express API]
-        W[Discovery Worker]
-        R[Redis Cache/Queue]
+    subgraph "Application Tier"
+        Nginx -->|Routes /api/*| Express[Express.js API Gateway]
+        Nginx -->|Routes /classify| FastAPI[FastAPI AI Service]
+        Nginx -->|Serves| SPA[React Frontend]
     end
 
-    subgraph "AI & Data"
-        AI[CLIP Classifier]
-        DB[(PostgreSQL)]
+    subgraph "Processing Tier"
+        Express -->|Enqueues Jobs| BullMQ[BullMQ - Redis]
+        BullMQ --> Worker[Discovery Worker]
+        Worker -->|Analyzes| YouTube[(YouTube Data API v3)]
+        Worker -->|Classifies| FastAPI
     end
 
-    YT[(YouTube API)] --> W
-    W --> AI
-    AI --> W
-    W --> DB
-    FE <--> BE
-    BE <--> DB
-    BE <--> R
+    subgraph "Data Tier"
+        Express <-->|CRUD| PG[(PostgreSQL)]
+        Worker -->|Saves Content| PG
+        Express <-->|Cache| Redis[(Redis)]
+    end
 ```
+
+### Core Components
+
+-   **🛡️ Nginx (Edge Gateway)**: The primary entry point for all traffic. It handles SSL termination, request rate-limiting, and path-based routing. It serves the React SPA and enforces security policies (CORS, CSP).
+-   **🚀 Express.js (Core API)**: Orchesrates business logic, manages video metadata, and provides the RESTful interface for the frontend. It integrates deeply with the YouTube Data API.
+-   **🤖 FastAPI (AI Inference)**: A high-performance Python service hosting the **OpenAI CLIP** model. It performs semantic analysis on video thumbnails and titles to ensure high-precision categorization.
+-   **📡 BullMQ & Workers**: A Redis-backed distributed task queue that handles background discovery, periodic channel polling, and asynchronous content classification.
+-   **💾 PostgreSQL**: The source of truth for all persistent data, including video records, channel configurations, and system logs.
+-   **⚡ Redis**: Handles both the high-speed job queue for BullMQ and serves as a caching layer to reduce database load.
+
+## 🤖 AI Service Architecture (Internal Pipeline)
+
+The AI Classification Service is a high-performance **FastAPI** application designed for real-time video categorization using OpenAI's **CLIP** (Contrastive Language-Image Pre-training) model.
+
+```mermaid
+graph LR
+    subgraph "Input Processing"
+        URL[Thumbnail URL] -->|Download| IMG[PIL Image]
+        TITLE[Video Title] -->|Clean| TXT[Clean Text]
+    end
+
+    subgraph "CLIP Inference Engine"
+        IMG -->|Vision Encoder| IF[Image Features]
+        TXT -->|Text Encoder| TF[Text Features]
+    end
+
+    subgraph "Feature Fusion & Scoring"
+        IF -->|70% Weight| CF[Combined Feature]
+        TF -->|30% Weight| CF
+        CF -->|Cosine Similarity| SCORE[Cosine Similarity Calculation]
+        GP[Pre-encoded Genre Prompts] --> SCORE
+    end
+
+    subgraph "Result"
+        SCORE --> TOP[Best Match - Genre]
+    end
+```
+
+### Key Technical Details
+
+-   **Multimodal Inference**: Unlike traditional image classifiers, this service uses **multimodal embeddings**. It extracts visual features from the thumbnail and semantic features from the title/description, combining them into a single high-dimensional vector.
+-   **Feature Fusion (70/30 Rule)**: The system applies a 70% weight to the image features (visual content) and 30% to the textual titles to achieve maximum categorization precision.
+-   **Zero-Shot Dynamic Sync**: When new genres are discovered or existing ones updated, the system triggers a `/genres/sync` call. The AI service re-encodes text prompts into high-dimensional embeddings on the fly, allowing for "live" category updates without model retraining or service restarts.
+-   **Singleton Lifecycle**: The CLIP model is loaded as a singleton during the FastAPI startup lifespan, ensuring optimal memory usage across concurrent requests.
 
 ## 📈 Advanced Functionality
 
